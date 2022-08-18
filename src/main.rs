@@ -11,6 +11,8 @@ fn main() {
     let mut player: player::PlayerInfo = player::create_player();
     let mut name = String::new();
     let mut input = String::new();
+    let mut result: bool = false;
+    let mut difficulty: i32 = 0;
 
     println!("Hello, and welcome to the game!");
     println!("Please enter your name: ");
@@ -33,7 +35,9 @@ fn main() {
     let input: u32 = input.trim().parse().expect("Please type a number!");
 
     match input {
-        0 => {println!("You attempt to creep around the figure");},
+        0 => {println!("You attempt to creep around the figure");
+        let difficulty = 12;
+        let result = player::player_skill_check(&player, "dexterity", difficulty);},
         1 => {println!("You charge the figure your axe raised")},
         other => {println!("You do nothing")}
     }

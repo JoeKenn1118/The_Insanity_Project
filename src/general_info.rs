@@ -1,5 +1,6 @@
 pub mod actions{
     pub use rand::Rng;
+
     pub fn skill_check (skill: i32, bonus: i32, difficulty: i32) -> bool {
         let roll = rand::thread_rng().gen_range(1..=20);
         if (skill + roll + bonus) > difficulty {

@@ -23,6 +23,12 @@ pub mod player {
     pub fn set_player_name (player: &mut PlayerInfo, name: &str) {
         player.name = name.to_string();
     }
+
+    pub fn player_skill_check (player: &PlayerInfo, skill: &str, difficulty: i32) -> bool {
+        let skill_bonus: i32 = super::stats::get_stat_bonus(&player.stats, skill);
+        let bonus :i32 = 0;
+        super::actions::skill_check(skill_bonus, bonus, difficulty)
+    }
 }
 
 pub mod monsters {
