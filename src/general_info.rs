@@ -10,6 +10,20 @@ pub mod actions{
     }
 }
 
+pub mod health{
+    pub struct Health {
+        total: i32,
+        current: i32,
+    }
+
+    fn init_health () -> Health {
+        Health {
+            total: 1,
+            current: 1,
+        }
+    }
+}
+
 pub mod stats{
     pub struct Stats {
         strength: i32,
@@ -72,15 +86,20 @@ pub mod inventory{
     pub struct Equipped {
         weapon: Item,
         off_hand: Item,
+        armor: Armor,
+        ring1: Item,
+        ring2: Item,
+        amulet: Item,
+        backpack: Item,
+    }
+
+    pub struct Armor {
+        total_ac: i32,
         head: Item,
         chest: Item,
         legs: Item,
         feet: Item,
         hands: Item,
-        ring1: Item,
-        ring2: Item,
-        amulet: Item,
-        backpack: Item,
     }
     pub struct Inventory {
         max_items: i32,
@@ -90,17 +109,17 @@ pub mod inventory{
     pub fn init_inventory () -> Inventory {
         Inventory {
             max_items: 10,
-            items: Vec::new(),
+            items: Vec::<Item>::new(),
         }
     }
 
     pub fn init_equipped () -> Equipped {
         Equipped {
             weapon: Item {
-                name: "Axe".to_string(),
+                name: "None".to_string(),
                 enchantment: 0,
                 inventory: false,
-                bonus: 1,
+                bonus: 0,
                 value: 0,
             },
             off_hand: Item {
@@ -110,40 +129,43 @@ pub mod inventory{
                 bonus: 0,
                 value: 0,
             },
-            head: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                inventory: false,
-                bonus: 0,
-                value: 0,
-            },
-            chest: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                inventory: false,
-                bonus: 0,
-                value: 0,
-            },
-            legs: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                inventory: false,
-                bonus: 0,
-                value: 0,
-            },
-            feet: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                inventory: false,
-                bonus: 0,
-                value: 0,
-            },
-            hands: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                inventory: false,
-                bonus: 0,
-                value: 0,
+            armor: Armor {
+                total_ac: 10,
+                head: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    inventory: false,
+                    bonus: 0,
+                    value: 0,
+                },
+                chest: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    inventory: false,
+                    bonus: 0,
+                    value: 0,
+                },
+                legs: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    inventory: false,
+                    bonus: 0,
+                    value: 0,
+                },
+                feet: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    inventory: false,
+                    bonus: 0,
+                    value: 0,
+                },
+                hands: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    inventory: false,
+                    bonus: 0,
+                    value: 0,
+                },
             },
             ring1: Item {
                 name: "None".to_string(),

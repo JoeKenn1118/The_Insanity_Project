@@ -5,7 +5,7 @@ use std::io;
 //use rand::Rng;    
 
 use crate::general_info::*;
-use crate::characters::player;
+use crate::characters::*;
 
 fn main() {
     let mut player: player::PlayerInfo = player::create_player();
@@ -38,8 +38,15 @@ fn main() {
         0 => {println!("You attempt to creep around the figure");
         let difficulty = 12;
         let result = player::player_skill_check(&player, "dexterity", difficulty);},
-        1 => {println!("You charge the figure your axe raised")},
-        other => {println!("You do nothing")}
+        1 => {println!("You charge the figure, your axe raised")},
+        2 => {println!("You call out to the figure, and it responds");
+            println!("Ah, showing yourself I see. Come to your death peasant, at least it might be an honourable one.");
+            println!("Combat begins!");
+            //let mut Orc = monster::create_monster("Orc");
+        },
+        3 => {println!("You run back into the woods")},
+        4 => {println!("You attack the figure")},
+        _ => {println!("You do nothing")}
     }
 
 
