@@ -38,18 +38,21 @@ fn init_orc_inventory () -> inventory::Inventory{
 }
 
 fn init_orc_equipped () -> inventory::Equipped {
-    inventory::Equipped {
+    let equip: inventory::Equipped = inventory::Equipped::init_equipped();
+
+    // Set Specifics for Orc
+
+    equip
+        /*{
         weapon: inventory::Item {
             name: "Orc Sword".to_string(),
             enchantment: 0,
-            inventory: false,
             bonus: 0,
             value: 0,
         },
         off_hand: inventory::Item {
             name: "None".to_string(),
             enchantment: 0,
-            inventory: false,
             bonus: 0,
             value: 0,
         },
@@ -58,35 +61,30 @@ fn init_orc_equipped () -> inventory::Equipped {
             head: inventory::Item {
                 name: "None".to_string(),
                 enchantment: 0,
-                inventory: false,
                 bonus: 0,
                 value: 0,
             },
             chest: inventory::Item {
                 name: "None".to_string(),
                 enchantment: 0,
-                inventory: false,
                 bonus: 0,
                 value: 0,
             },
             legs: inventory::Item {
                 name: "None".to_string(),
                 enchantment: 0,
-                inventory: false,
                 bonus: 0,
                 value: 0,
             },
             feet: inventory::Item {
                 name: "None".to_string(),
                 enchantment: 0,
-                inventory: false,
                 bonus: 0,
                 value: 0,
             },
             hands: inventory::Item {
                 name: "None".to_string(),
                 enchantment: 0,
-                inventory: false,
                 bonus: 0,
                 value: 0,
             },
@@ -94,30 +92,22 @@ fn init_orc_equipped () -> inventory::Equipped {
         ring1: inventory::Item {
             name: "None".to_string(),
             enchantment: 0,
-            inventory: false,
             bonus: 0,
             value: 0,
         },
         ring2: inventory::Item {
             name: "None".to_string(),
             enchantment: 0,
-            inventory: false,
             bonus: 0,
             value: 0,
         },
         amulet: inventory::Item {
             name: "Orc War Amulet".to_string(),
             enchantment: 0,
-            inventory: false,
             bonus: 0,
             value: 0,
         },
-        backpack: inventory::Item {
-            name: "None".to_string(),
-            enchantment: 0,
-            inventory: false,
-            bonus: 0,
-            value: 0,
-        },
+        backpack.init_inventory(),
     }
+    */
 }

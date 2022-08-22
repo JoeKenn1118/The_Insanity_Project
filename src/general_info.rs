@@ -77,12 +77,22 @@ pub mod stats{
 
 pub mod inventory{
     use std::io;
+
+    #[derive(Clone)]
     pub struct Item {
         name: String,
         enchantment: i32,
-        inventory: bool,
         bonus: i32,
         value: i32,
+    }
+
+    impl Item {
+        pub fn init_item (&mut self) {
+            self.name = "None".to_string();
+            self.enchantment = 0;
+            self.bonus = 0;
+            self.value = 0;
+        }
     }
     pub struct Armor {
         total_ac: i32,
@@ -91,6 +101,44 @@ pub mod inventory{
         legs: Item,
         feet: Item,
         hands: Item,
+    }
+
+    impl Armor {
+        pub fn init_armor() ->Self {
+            Self {
+                total_ac: 10,
+                head: Item {
+                name: "None".to_string(),
+                enchantment: 0,
+                bonus: 0,
+                value: 0
+                },
+                chest: Item {
+                name: "None".to_string(),
+                enchantment: 0,
+                bonus: 0,
+                value: 0
+                },
+                legs: Item {
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    bonus: 0,
+                    value: 0
+                },
+                feet: Item {
+                name: "None".to_string(),
+                enchantment: 0,
+                bonus: 0,
+                value: 0
+                },
+                hands: Item {
+                name: "None".to_string(),
+                enchantment: 0,
+                bonus: 0,
+                value: 0
+                }
+            }
+        }
     }
     pub struct Equipped {
         weapon: Item,
@@ -103,84 +151,44 @@ pub mod inventory{
     }
 
     impl Equipped{
-        pub fn init_equipped (&mut self){
-                self.weapon = Item {
+        pub fn init_equipped () -> Self{
+                Self{
+                    weapon: Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
-                };
-                self.off_hand = Item {
+                    },
+                    off_hand : Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
-                };
-                self.armor = Armor {
-                    total_ac: 10,
-                    head: Item {
-                        name: "None".to_string(),
-                        enchantment: 0,
-                        inventory: false,
-                        bonus: 0,
-                        value: 0,
                     },
-                    chest: Item {
-                        name: "None".to_string(),
-                        enchantment: 0,
-                        inventory: false,
-                        bonus: 0,
-                        value: 0,
-                    },
-                    legs: Item {
-                        name: "None".to_string(),
-                        enchantment: 0,
-                        inventory: false,
-                        bonus: 0,
-                        value: 0,
-                    },
-                    feet: Item {
-                        name: "None".to_string(),
-                        enchantment: 0,
-                        inventory: false,
-                        bonus: 0,
-                        value: 0,
-                    },
-                    hands: Item {
-                        name: "None".to_string(),
-                        enchantment: 0,
-                        inventory: false,
-                        bonus: 0,
-                        value: 0,
-                    },
-                };
-                self.ring1 = Item {
+                    armor: Armor::init_armor(),
+                    ring1: Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
-                };
-                self.ring2 = Item {
+                    },
+                    ring2: Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
-                };
-                self.amulet = Item {
+                    },
+                    amulet: Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
-                };
-                self.backpack = Inventory::init_inventory();
+                    },
+                    backpack: Inventory::init_inventory()
+                }
             }
            
-        fn add_equipped (&mut self, item_type: &str, item: Item) {
+        pub fn add_equipped (&mut self, item_type: &str, item: Item) {
             if self.find_equipped(item_type) {
                 self.remove_equipped(item_type);
             }
@@ -199,50 +207,49 @@ pub mod inventory{
             match item_type {
                 "Weapon" => {
                     if self.weapon.name == "None" {
-                        return false;
+                        return false
                     }
-                    return true;
-                }
+                    return true
+                },
                 "Off Hand" => {
                     if self.off_hand.name == "None" {
-                        return false;
+                        return false
                     }
-                    return true;
-                }
-                "Armor" => {
-                    // Figure this out
-                }
+                    return true
+                },
+                "Armor" => return false, // Figure this out
                 "Ring 1" => {
                     if self.ring1.name == "None" {
-                        return false;
+                        return false
                     }
-                    return true;
+                    return true
                 }
                 "Ring 2" => {
                     if self.ring2.name == "None" {
-                        return false;
+                        return false
                     }
-                    return true;
+                    return true
                 }
                 "Amulet" => {
                     if self.amulet.name == "None" {
-                        return false;
+                        return false
                     }
-                    return true;
+                    return true
                 }
-                _ => {println!("Incorrect Item Type");()},
+                _ => {println!("Incorrect Item Type");
+                        return false
+                    },
             }
         }
         
         fn remove_equipped(&mut self, item_type: &str) {
             match item_type {
                 "Weapon" => {
-                    if self.backpack.add_item(self.weapon) 
+                    if self.backpack.add_item(self.weapon.clone()) 
                     {
                         self.weapon = Item {
                             name: "None".to_string(),
                             enchantment: 0,
-                            inventory: false,
                             bonus: 0,
                             value: 0,
                             };
@@ -255,7 +262,6 @@ pub mod inventory{
                 "Off Hand" => self.off_hand = Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
                 },
@@ -263,21 +269,18 @@ pub mod inventory{
                 "Ring 1" => self.ring1 = Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
                 },
                 "Ring 2" => self.ring2 = Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
                 },
                 "Amulet" => self.amulet = Item {
                     name: "None".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
                 },
@@ -291,9 +294,11 @@ pub mod inventory{
     }
 
     impl Inventory {
-        pub fn init_inventory (& mut self) {
-            self.max_items = 0;
-            self.items = Vec::<Item>::new();
+        pub fn init_inventory () -> Self {
+            Self {
+                max_items: 0,
+                items: Vec::<Item>::new()
+            }
         }
         pub fn add_item (&mut self, item: Item) -> bool {
             if self.max_items < self.items.len(){
@@ -331,14 +336,13 @@ pub mod inventory{
         pub fn get_item (&self, item: &str) -> Item {
             if self.find_item(item) {
                 let index = self.find_item_index(item);
-                return self.items[index]
+                return self.items[index].clone()
             }
             else {
                 println!("Item not found");
                 return Item {
                     name: "".to_string(),
                     enchantment: 0,
-                    inventory: false,
                     bonus: 0,
                     value: 0,
                 }

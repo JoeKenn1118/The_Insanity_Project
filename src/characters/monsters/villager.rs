@@ -1,4 +1,6 @@
-use crate::general_info::*;
+use crate::general_info::inventory::*;
+use crate::general_info::health::*;
+use crate::general_info::stats::*;
 use super::*;
 use rand::Rng;
 
@@ -11,16 +13,16 @@ pub fn create_villager () -> MonsterInfo{
     }
 }
 
-fn init_villager_health () -> health::Health {
+fn init_villager_health () -> Health {
     let val = rand::thread_rng().gen_range(1..=5);
-    health::Health {
+    Health {
         total: val,
         current: val,
     }
 }
 
-fn init_villager_stats () -> stats::Stats {
-    stats::Stats {
+fn init_villager_stats () -> Stats {
+    Stats {
         strength: 11,
         dexterity: 10,
         constitution: 9,
@@ -30,51 +32,53 @@ fn init_villager_stats () -> stats::Stats {
     }
 }
 
-fn init_villager_inventory () -> inventory::Inventory{
-    let mut inv: inventory::Inventory = inventory::init_inventory();
-
-    inv.add_item(inventory::Item {
-        name: "Gold".to_string(),
-        enchantment: 0,
-        inventory: false,
-        bonus: 0,
-        value: 1,
-    });
-
-    inv
+pub fn init_villager_inventory () -> Inventory {
+    let mut inv:Inventory = Inventory::init_inventory();
+    // Add Changes to inventory
+    let temp_item = Item{
+            name: "Gold".to_string(),
+            enchantment: 0,
+            bonus: 0,
+            value: 1,
+    };
+    inv.add_item(temp_item);
+    return inv;
 }
 
-fn init_villager_equipped () -> inventory::Equipped {
-    let mut equip: inventory::Equipped = inventory::init_equipped();
+fn init_villager_equipped () -> Equipped {
+    let mut equip: Equipped = Equipped::init_equipped();
 
-    equip.weapon = inventory::Item {
+    let mut temp_item: Item = Item {
         name: "Plow".to_string(),
         enchantment: 0,
-        inventory: false,
         bonus: 0,
         value: 0,
     };
-    equip.armor.chest = inventory::Item {
+    equip.add_equipped("Weapon", temp_item);
+
+    let mut temp_item: Item = Item {
         name: "Peasant Shirt".to_string(),
         enchantment: 0,
-        inventory: false,
         bonus: 0,
         value: 0,
     };
-    equip.armor.legs = inventory::Item {
+    equip.add_equipped("Armor", temp_item);
+    
+    let mut temp_item: Item = Item {
         name: "Peasant Trousers".to_string(),
         enchantment: 0,
-        inventory: false,
         bonus: 0,
         value: 0,
     };
-    equip.armor.feet = inventory::Item {
+    equip.add_equipped("Armor", temp_item);
+    
+    let mut temp_item: Item = Item {
         name: "Peasant Shoes".to_string(),
         enchantment: 0,
-        inventory: false,
         bonus: 0,
         value: 0,
     };
+    equip.add_equipped("Armor", temp_item);
 
-    inv
+    equip
 }
