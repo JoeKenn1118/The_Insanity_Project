@@ -1,5 +1,5 @@
 pub struct MonsterInfo {
-    health: health::Health,
+    health: super::health::Health,
     stats: super::stats::Stats,
     inventory: super::inventory::Inventory,
     equipped: super::inventory::Equipped,
@@ -13,10 +13,11 @@ pub fn create_monster (monstertype: &str) -> MonsterInfo {
     match(monstertype)
     {
         "Orc" => orc::create_orc(),
-        "Goblin" => create_goblin(),
-        _ => create_villager()
+        //"Goblin" => create_goblin(),
+        _ => villager::create_villager()
     }
 }
 
 
 mod orc;
+mod villager;

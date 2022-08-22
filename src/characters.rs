@@ -4,7 +4,6 @@ pub mod player {
         health: super::health::Health,
         pub name: String,
         stats: super::stats::Stats,
-        inventory: super::inventory::Inventory,
         equipped: super::inventory::Equipped,
     }
 
@@ -17,7 +16,6 @@ pub mod player {
             health: init_player_health(),
             name: String::new(),
             stats: super::stats::init_stats(),
-            inventory: super::inventory::init_inventory(),
             equipped: super::inventory::init_equipped(),
         }
     }
