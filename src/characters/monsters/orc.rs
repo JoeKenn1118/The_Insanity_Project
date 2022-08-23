@@ -1,113 +1,70 @@
-use crate::general_info::*;
 use super::*;
 use rand::Rng;
+use crate::general_info::{inventory::*, health::*, stats::*};
 
 pub fn create_orc () -> MonsterInfo{
     MonsterInfo {
+        name: "Orc".to_string(),
         health: init_orc_health(),
         stats: init_orc_stats(),
-        inventory: init_orc_inventory(),
         equipped: init_orc_equipped(),
     }
 }
 
-fn init_orc_health () -> health::Health {
+fn init_orc_health () -> Health {
     let val = rand::thread_rng().gen_range(5..=10);
-    health::Health {
-        total: val,
-        current: val,
-    }
+    let Hp = Health::init_health(val, val);
+
+    Hp
 }
 
-fn init_orc_stats () -> stats::Stats {
-    stats::Stats {
-        strength: 13,
-        dexterity: 8,
-        constitution: 12,
-        intelligence: 8,
-        wisdom: 8,
-        charisma: 6,
-    }
+fn init_orc_stats () -> Stats {
+    let stats: Stats = Stats::init_stats(11,10,9,8,10,10);
+
+    stats
 }
 
-fn init_orc_inventory () -> inventory::Inventory{
-    inventory::Inventory {
-        max_items: 10,
-        items: Vec::<inventory::Item>::new(),
-    }
+fn init_orc_inventory () -> Inventory{
+    let mut inv:Inventory = Inventory::init_inventory();
+    // Add Changes to inventory
+    let temp_item = Item {
+            name: "Gold".to_string(),
+            enchantment: 0,
+            bonus: 0,
+            value: 10,
+    };
+    inv.add_item(temp_item);
+    return inv;
 }
 
-fn init_orc_equipped () -> inventory::Equipped {
-    let equip: inventory::Equipped = inventory::Equipped::init_equipped();
+fn init_orc_equipped () -> Equipped {
+    let mut equip: Equipped = Equipped::init_equipped();
 
     // Set Specifics for Orc
+    let temp_item: Item = Item {
+        name: "Orc Sword".to_string(),
+            enchantment: 0,
+            bonus: 0,
+            value: 0,
+    };
+    equip.add_equipped("Weapon", temp_item);
 
+    let temp_item: Item = Item {
+        name: "Orc War Amulet".to_string(),
+            enchantment: 0,
+            bonus: 0,
+            value: 0,
+    };
+    equip.add_equipped("Amulet", temp_item);
+
+
+    let temp_item: Item = Item {
+        name: "Gold".to_string(),
+            enchantment: 0,
+            bonus: 0,
+            value: 10,
+    };
+    equip.bag.add_item(temp_item);
     equip
-        /*{
-        weapon: inventory::Item {
-            name: "Orc Sword".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 0,
-        },
-        off_hand: inventory::Item {
-            name: "None".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 0,
-        },
-        armor: inventory::Armor{
-            total_ac: 10,
-            head: inventory::Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0,
-            },
-            chest: inventory::Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0,
-            },
-            legs: inventory::Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0,
-            },
-            feet: inventory::Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0,
-            },
-            hands: inventory::Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0,
-            },
-        },
-        ring1: inventory::Item {
-            name: "None".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 0,
-        },
-        ring2: inventory::Item {
-            name: "None".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 0,
-        },
-        amulet: inventory::Item {
-            name: "Orc War Amulet".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 0,
-        },
-        backpack.init_inventory(),
-    }
-    */
+       
 }

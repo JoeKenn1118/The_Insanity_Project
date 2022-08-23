@@ -1,5 +1,6 @@
 pub mod actions{
-    pub use rand::Rng;
+    use rand::Rng;
+    use crate::characters::{monsters::*, player::*};
 
     pub fn skill_check (skill: i32, bonus: i32, difficulty: i32) -> bool {
         let roll = rand::thread_rng().gen_range(1..=20);
@@ -8,20 +9,46 @@ pub mod actions{
         }
         return false;
     }
+
+    // Combat! if false, player is dead
+    pub fn combat (player: &mut PlayerInfo, monster: &mut MonsterInfo) -> bool {
+        println!("Combat!");
+        println!("You approach the {} and with a swift heave of his sword you are cleaved nearly in two.", monster.name);
+
+        return false;
+    }
 }
 
 pub mod health{
     pub struct Health {
-        total: i32,
+        pub max: i32,
         current: i32,
     }
-
-    fn init_health () -> Health {
-        Health {
-            total: 1,
-            current: 1,
+    impl Health {
+        pub fn init_health (max: i32, current: i32) -> Self {
+            if max < 1 || current < 1 {
+                panic!("Max or Current health cannot be less than 1");
+            }
+            Self {
+                max: max,
+                current: current,
+            }
+        }
+        pub fn set_max_health (&mut self, max: i32) {
+            self.max = max;
+        }
+        pub fn set_current_health (&mut self, current: i32) {
+            self.current = current;
+        }
+        pub fn get_current_health (&self) -> i32 {
+            self.current
+        }
+        pub fn affect_health (&mut self, amount: i32) -> i32 {
+            self.current += amount;
+            self.current
         }
     }
+
 }
 
 pub mod stats{
@@ -34,43 +61,47 @@ pub mod stats{
         charisma: i32,
     }
     
-    pub fn init_stats () -> Stats {
-        Stats{
-            strength: 10,
-            dexterity: 10,
-            constitution: 10,
-            intelligence: 10,
-            wisdom: 10,
-            charisma: 10,
+    impl Stats {
+        pub fn init_stats (str: i32, dex: i32, con: i32, int: i32, wis: i32, cha: i32) -> Self {
+            Self {
+                strength: str,
+                dexterity: dex,
+                constitution: con,
+                intelligence: int,
+                wisdom: wis,
+                charisma: cha,
+            }
         }
-    }
 
-    pub fn get_stat (stats: &Stats, stat_name: &str) -> i32 {
-        match stat_name {
-            "strength" => stats.strength,
-            "dexterity" => stats.dexterity,
-            "constitution" => stats.constitution,
-            "intelligence" => stats.intelligence,
-            "wisdom" => stats.wisdom,
-            "charisma" => stats.charisma,
-            _ => 1,
+        pub fn get_stat (&self, stat_name: &str) -> i32 {
+            match stat_name {
+                "str" => self.strength,
+                "dex" => self.dexterity,
+                "con" => self.constitution,
+                "int" => self.intelligence,
+                "wis" => self.wisdom,
+                "cha" => self.charisma,
+                _ => panic!("Invalid stat name"),
+            }
         }
-    }
 
-    pub fn get_stat_bonus (stats: &Stats, stat_name: &str) -> i32 {
-        let stat = get_stat(stats, stat_name);
-        return (stat - 10) / 2;
-    }
+        pub fn get_stat_bonus (&self, stat: &str) -> i32 {
+            let mut result = self.get_stat(stat);
+            result = (result - 10) / 2;
 
-    pub fn set_stat (stats: &mut Stats, stat_name: &str, value: i32) {
-        match stat_name {
-            "strength" => stats.strength = value,
-            "dexterity" => stats.dexterity = value,
-            "constitution" => stats.constitution = value,
-            "intelligence" => stats.intelligence = value,
-            "wisdom" => stats.wisdom = value,
-            "charisma" => stats.charisma = value,
-            _ => (),
+            return result;
+        }
+
+        pub fn set_stat (stats: &mut Stats, stat_name: &str, value: i32) {
+            match stat_name {
+                "str" => stats.strength = value,
+                "dex" => stats.dexterity = value,
+                "con" => stats.constitution = value,
+                "int" => stats.intelligence = value,
+                "wis" => stats.wisdom = value,
+                "cha" => stats.charisma = value,
+                _ => (),
+            }
         }
     }
 }
@@ -80,18 +111,20 @@ pub mod inventory{
 
     #[derive(Clone)]
     pub struct Item {
-        name: String,
-        enchantment: i32,
-        bonus: i32,
-        value: i32,
+        pub name: String,
+        pub enchantment: i32,
+        pub bonus: i32,
+        pub value: i32,
     }
 
     impl Item {
-        pub fn init_item (&mut self) {
-            self.name = "None".to_string();
-            self.enchantment = 0;
-            self.bonus = 0;
-            self.value = 0;
+        pub fn init_item () -> Self {
+            Self {
+                name: "None".to_string(),
+                enchantment: 0,
+                bonus: 0,
+                value: 0,
+            }
         }
     }
     pub struct Armor {
@@ -108,16 +141,16 @@ pub mod inventory{
             Self {
                 total_ac: 10,
                 head: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    bonus: 0,
+                    value: 0
                 },
                 chest: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    bonus: 0,
+                    value: 0
                 },
                 legs: Item {
                     name: "None".to_string(),
@@ -126,16 +159,16 @@ pub mod inventory{
                     value: 0
                 },
                 feet: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    bonus: 0,
+                    value: 0
                 },
                 hands: Item {
-                name: "None".to_string(),
-                enchantment: 0,
-                bonus: 0,
-                value: 0
+                    name: "None".to_string(),
+                    enchantment: 0,
+                    bonus: 0,
+                    value: 0
                 }
             }
         }
@@ -147,44 +180,50 @@ pub mod inventory{
         ring1: Item,
         ring2: Item,
         amulet: Item,
-        backpack: Inventory,
+        pub bag: Inventory,
     }
 
     impl Equipped{
         pub fn init_equipped () -> Self{
                 Self{
                     weapon: Item {
-                    name: "None".to_string(),
-                    enchantment: 0,
-                    bonus: 0,
-                    value: 0,
+                        name: "None".to_string(),
+                        enchantment: 0,
+                        bonus: 0,
+                        value: 0,
                     },
+
                     off_hand : Item {
-                    name: "None".to_string(),
-                    enchantment: 0,
-                    bonus: 0,
-                    value: 0,
+                        name: "None".to_string(),
+                        enchantment: 0,
+                        bonus: 0,
+                        value: 0,
                     },
+
                     armor: Armor::init_armor(),
+
                     ring1: Item {
-                    name: "None".to_string(),
-                    enchantment: 0,
-                    bonus: 0,
-                    value: 0,
+                        name: "None".to_string(),
+                        enchantment: 0,
+                        bonus: 0,
+                        value: 0,
                     },
+
                     ring2: Item {
-                    name: "None".to_string(),
-                    enchantment: 0,
-                    bonus: 0,
-                    value: 0,
+                        name: "None".to_string(),
+                        enchantment: 0,
+                        bonus: 0,
+                        value: 0,
                     },
+
                     amulet: Item {
-                    name: "None".to_string(),
-                    enchantment: 0,
-                    bonus: 0,
-                    value: 0,
+                        name: "None".to_string(),
+                        enchantment: 0,
+                        bonus: 0,
+                        value: 0,
                     },
-                    backpack: Inventory::init_inventory()
+
+                    bag: Inventory::init_inventory()
                 }
             }
            
@@ -199,7 +238,7 @@ pub mod inventory{
                 "Ring 1" => self.ring1 = item,
                 "Ring 2" => self.ring2 = item,
                 "Amulet" => self.amulet = item,
-                _ => (),
+                _ => ()
             }
         }
 
@@ -245,7 +284,7 @@ pub mod inventory{
         fn remove_equipped(&mut self, item_type: &str) {
             match item_type {
                 "Weapon" => {
-                    if self.backpack.add_item(self.weapon.clone()) 
+                    if self.bag.add_item(self.weapon.clone()) 
                     {
                         self.weapon = Item {
                             name: "None".to_string(),
@@ -300,8 +339,13 @@ pub mod inventory{
                 items: Vec::<Item>::new()
             }
         }
+
+        pub fn increase_max_items (&mut self, max_items: usize) {
+            self.max_items = max_items;
+        }
+
         pub fn add_item (&mut self, item: Item) -> bool {
-            if self.max_items < self.items.len(){
+            if self.max_items < self.items.len() + 1{
                 self.items.push(item);
                 return true
             }
