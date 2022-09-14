@@ -3,8 +3,11 @@ use crate::general_info::*;
 // Consider moving most of this to a character module which player builds on top of
 pub mod player {
     use crate::general_info::inventory::Equipped;
+    use crate::general_info::inventory::*;
     use crate::general_info::health::*;
     use crate::general_info::stats::*;
+
+    use super::monsters::MonsterInfo;
     pub struct PlayerInfo {
         health: super::health::Health,
         pub name: String,
@@ -18,7 +21,7 @@ pub mod player {
                 health: PlayerInfo::init_player_health(),
                 name: name,
                 stats: PlayerInfo::init_player_stats(),
-                equipped: Equipped::init_equipped()
+                equipped: PlayerInfo::init_player_equipped()
             }
         }
 
@@ -36,6 +39,15 @@ pub mod player {
             return stats;
         }
 
+        pub fn init_player_equipped () -> Equipped {
+            let mut equipped: Equipped = Equipped::init_equipped();
+
+            let mut tempItem = Item::init_item();
+            tempItem.name = "Rusty Axe".to_string();
+            equipped.add_equipped("Weapon", tempItem);
+            return equipped;
+        }
+
         pub fn get_player_stat_bonus (&self, stat: &str) -> i32 {
             let result = self.stats.get_stat_bonus(stat);
             return result;
@@ -45,6 +57,18 @@ pub mod player {
             let skill_bonus: i32 = self.get_player_stat_bonus(skill);
             let bonus :i32 = 0; // Implement finding bonuses from equipped items
             super::actions::skill_check(skill_bonus, bonus, difficulty)
+        }
+
+        pub fn player_initiative_roll(&self) -> i32 {
+            let dex_bonus: i32 = self.get_player_stat_bonus("dex");
+            let bonus :i32 = 0; // Implement finding bonuses from equipped items
+            super::actions::initiative_roll(dex_bonus, bonus)
+        }
+
+        pub fn player_attack(&self, monster: &mut MonsterInfo) {
+            let str_bonus: i32 = self.get_player_stat_bonus("str");
+            let bonus :i32 = self.equipped.get_item_equipped("Weapon").bonus;
+            let roll = super::actions::attack_roll(str_bonus, bonus);
         }
     }
 

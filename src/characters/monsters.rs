@@ -13,12 +13,25 @@ pub struct MonsterInfo {
     equipped: Equipped,
 }
 
-pub fn create_monster (monstertype: &str) -> MonsterInfo {
-    match monstertype
-    {
-        "Orc" => orc::create_orc(),
-        //"Goblin" => create_goblin(),
-        _ => villager::create_villager()
+impl MonsterInfo {
+    pub fn create_monster (monstertype: &str) -> Self {
+        match monstertype
+        {
+            "Orc" => orc::create_orc(),
+            //"Goblin" => create_goblin(),
+            _ => villager::create_villager()
+        }
+    }
+
+    pub fn monster_initiative_roll(&self) -> i32 {
+        let dex_bonus: i32 = self.get_monster_stat_bonus("dex");
+        let bonus :i32 = 0; // Implement finding bonuses from equipped items
+        super::actions::initiative_roll(dex_bonus, bonus)
+    }
+
+    pub fn get_monster_stat_bonus(&self, stat: &str) -> i32 {
+        let result = self.stats.get_stat_bonus(stat);
+        return result;
     }
 }
 

@@ -27,11 +27,12 @@ fn main() {
     println!("[1] Approach Quickly to take the figure by surprise");
     println!("[2] Call out to the figure");
     println!("[3] Run away");
+    println!("[4] Attack the figure");
 
-    input = selection();
+    input = general_info::selection();
 
     let mut result = false;
-    let mut Orc = monsters::create_monster("Orc");
+    let mut Orc = monsters::MonsterInfo::create_monster("Orc");
     match input {
         0 => {
             println!("You attempt to creep around the figure");
@@ -45,11 +46,11 @@ fn main() {
                 println!("[1] Run away");
                 println!("[2] Sneak past");
                 println!("[3] Sneak up behind");
-                input = selection();
+                input = general_info::selection();
                 match input {
                     0 => {
                         println!("You charge at the {}!", Orc.name);
-                        result = combat(&mut player, &mut Orc);
+                        result = combat(&mut player, &mut Orc, false, false);
                     }
                     1 => {
                         println!("You run away!");
@@ -65,7 +66,7 @@ fn main() {
                         else {
                             println!("You failed to sneak past the {}!", Orc.name);
                             println!("\"You almost got past me human!\" You hear from behind.");
-                            result = combat(&mut player, &mut Orc);
+                            result = combat(&mut player, &mut Orc, true, false);
                         }
                     }
                     3 => {
@@ -74,12 +75,12 @@ fn main() {
 
                         if result {
                             println!("You successfully sneak up behind the {}!", Orc.name);
-                            result = combat(&mut player, &mut Orc);
+                            result = combat(&mut player, &mut Orc, true, false);
                         }
                         else {
                             println!("You failed to sneak up behind the {}!", Orc.name);
                             println!("\"You almost caught me human!\nAn effort at least, but it was for nothing!\"");
-                            result = combat(&mut player, &mut Orc);
+                            result = combat(&mut player, &mut Orc, false, false);
                         }
                     }
                     _ => {
@@ -92,24 +93,24 @@ fn main() {
             } else {
                 println!("You failed to creep around the figure");
                 println!("The figure turns to you. \"Pathetic, couldn't even muster the will to face me\"");
-                result = combat(&mut player, &mut Orc);
+                result = combat(&mut player, &mut Orc, false, true);
             }
         },
         1 => {
             println!("You charge the figure, your axe raised");
             println!("The figure is a {}!", Orc.name);
             println!("\"Aha Human! What Fervour! Come at me!\"");
-            result = combat(&mut player, &mut Orc);
+            result = combat(&mut player, &mut Orc, false, false);
         },
         2 => {
             println!("You call out to the figure, and it responds");
             println!("\"Ah, showing yourself I see.\" The figure turns, showing itself as an Orc!");
             println!("\"Come to your death peasant, at least it might be an honourable one.\"");
-            result = combat(&mut player, &mut Orc);
+            result = combat(&mut player, &mut Orc, false, false);
         },
         3 => {
             println!("You run back into the woods")
-        },
+            },
         _ => {
             println!("You do nothing")
         }
@@ -118,20 +119,14 @@ fn main() {
     if result == false {
         println!("You lie face down in the dirt, blood pooling around your body as you fade from consciousness.");
         println!("You have died!");
-        return ();
+        general_info::end_game();
     }
     else {
         println!("You live to see another day");
         println!("Congratulations, you have won!");
+        general_info::end_game();
     }
 
     println!("Thanks for playing!");
 
-}
-
-fn selection() -> u32 {
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
-
-    input.trim().parse().expect("Please type a number!")
 }

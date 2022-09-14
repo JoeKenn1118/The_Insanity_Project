@@ -1,6 +1,21 @@
+pub fn end_game() {
+    println!("Game Over, Thanks for playing!");
+    std::process::exit(0);
+}
+
+use std::io;
+pub fn selection() -> u32 {
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Failed to read line");
+
+    input.trim().parse().expect("Please type a number!")
+}
+
 pub mod actions{
+    //use std::vec;
+
     use rand::Rng;
-    use crate::characters::{monsters::*, player::*};
+    use crate::characters::{monsters::*, player::*, self};
 
     pub fn skill_check (skill: i32, bonus: i32, difficulty: i32) -> bool {
         let roll = rand::thread_rng().gen_range(1..=20);
@@ -10,8 +25,44 @@ pub mod actions{
         return false;
     }
 
+    pub struct Position{
+        pub name: String,
+        pub initiative: i32
+    }
+
+    pub fn initiative_roll(dex_bonus:i32, bonus: i32) -> i32 {
+        let roll = rand::thread_rng().gen_range(1..=20);
+        return roll + dex_bonus + bonus;
+    }
+
+    pub fn attack_roll (str_bonus: i32, bonus: i32) -> i32 {
+        let roll = rand::thread_rng().gen_range(1..=20);
+        return roll + str_bonus + bonus;
+    }
+
     // Combat! if false, player is dead
-    pub fn combat (player: &mut PlayerInfo, monster: &mut MonsterInfo) -> bool {
+    pub fn combat (player: &mut PlayerInfo, monster: &mut MonsterInfo, player_surprise: bool, monster_surprise: bool) -> bool {
+        let mut order: Vec<Position> = Vec::new();
+        order.push(Position{name: player.name.clone(), initiative: player.player_initiative_roll()});
+        order.push(Position{name: monster.name.clone(), initiative: monster.monster_initiative_roll()});
+        
+        order.sort_by(|a, b| b.initiative.cmp(&a.initiative));
+
+        if(player_surprise){
+            if(monster_surprise){
+                panic!("Both players cannot be surprised!");
+            }
+            println!("You get the first attack!");
+            let mut result = player.player_attack(monster);
+        }
+
+        for turn in order.len()..0 {
+            println!("It is {}'s turn!", order[turn].name);
+            
+            if order[turn].name == player.name {
+            }
+        }
+
         println!("Combat!");
         println!("You approach the {} and with a swift heave of his sword you are cleaved nearly in two.", monster.name);
 
@@ -27,8 +78,11 @@ pub mod health{
     impl Health {
         pub fn init_health (max: i32, current: i32) -> Self {
             if max < 1 || current < 1 {
-                panic!("Max or Current health cannot be less than 1");
+                panic!("Max or Current health cannot be less than 1 on init");
             }
+            else if current > max {
+                panic!("Current health cannot be larger than max on init");
+            }          
             Self {
                 max: max,
                 current: current,
@@ -302,7 +356,7 @@ pub mod inventory{
                     name: "None".to_string(),
                     enchantment: 0,
                     bonus: 0,
-                    value: 0,
+                    value: 0
                 },
                 "Armor" => (),
                 "Ring 1" => self.ring1 = Item {
@@ -324,6 +378,27 @@ pub mod inventory{
                     value: 0,
                 },
                 _ => (),
+            }
+        }
+
+        pub fn print_equipped(&self) {
+            println!("Weapon: {}", self.weapon.name);
+            println!("Off Hand: {}", self.off_hand.name);
+            println!("Armor: {}", self.armor.total_ac);
+            println!("Ring 1: {}", self.ring1.name);
+            println!("Ring 2: {}", self.ring2.name);
+            println!("Amulet: {}", self.amulet.name);
+        }
+
+        pub fn get_item_equipped(&self, item_type: &str) -> Item {
+            match item_type {
+                "Weapon" => self.weapon.clone(),
+                "Off Hand" => self.off_hand.clone(),
+                "Armor" => Item::init_item(),
+                "Ring 1" => self.ring1.clone(),
+                "Ring 2" => self.ring2.clone(),
+                "Amulet" => self.amulet.clone(),
+                _ => Item::init_item(),
             }
         }
     }
