@@ -20,7 +20,7 @@ fn main() {
 
     println!("Hello, {}!", player.name);
     println!("We begin in the Hamlet of Delvain. You are a mere peasant, with little to your name but drab clothes and calloused hands.");
-    println!("Coming back to your village from chopping firewood, you see smoke drifting through the trees.");
+    println!("Returning to your village from collecting firewood, you see smoke drifting through the trees.");
     println!("Running now, you come up to Delvain, the once peaceful village, in flames.");
     println!("A figure Approaches, what do you do?");
     println!("[0] Creep around to get a better look");
@@ -37,7 +37,7 @@ fn main() {
         0 => {
             println!("You attempt to creep around the figure");
             difficulty = 12;
-            result = player.player_skill_check("dex", difficulty);
+            result = player.skill_check("dex", difficulty);
             if result {
                 println!("You successfully creep around the figure");
                 println!("The figure is a {}!", Orc.name);
@@ -50,7 +50,7 @@ fn main() {
                 match input {
                     0 => {
                         println!("You charge at the {}!", Orc.name);
-                        result = combat(&mut player, &mut Orc, false, false);
+                        result = combat(&mut player, &mut Orc, true, false);
                     }
                     1 => {
                         println!("You run away!");
@@ -58,7 +58,7 @@ fn main() {
                     }
                     2 => {
                         println!("You attempt to sneak past the {}!", Orc.name);
-                        result = player.player_skill_check("dex", difficulty);
+                        result = player.skill_check("dex", difficulty);
 
                         if result {
                             println!("You successfully sneak past the {}!", Orc.name);
@@ -71,7 +71,7 @@ fn main() {
                     }
                     3 => {
                         println!("You attempt to sneak up behind the {}!", Orc.name);
-                        result = player.player_skill_check("dex", difficulty);
+                        result = player.skill_check("dex", difficulty);
 
                         if result {
                             println!("You successfully sneak up behind the {}!", Orc.name);
@@ -112,7 +112,10 @@ fn main() {
             println!("You run back into the woods")
             },
         _ => {
-            println!("You do nothing")
+            println!("You do nothing");
+            println!("The figure turns to you. It shows itself as an Orc!");
+            println!("\"Pathetic, couldn't even muster the will to move?\"");
+            result = combat(&mut player, &mut Orc, false, true);
         }
     }
 
