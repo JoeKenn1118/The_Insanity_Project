@@ -2,10 +2,8 @@ use crate::general_info::*;
 
 // Consider moving most of this to a character module which player builds on top of
 pub mod player {
-    use crate::general_info::inventory::Equipped;
-    use crate::general_info::inventory::*;
-    use crate::general_info::health::*;
-    use crate::general_info::stats::*;
+    use crate::general_info::{inventory::*, health::*, stats::*, actions::*};
+
 
     use super::monsters::MonsterInfo;
     pub struct PlayerInfo {
@@ -44,31 +42,68 @@ pub mod player {
 
             let mut tempItem = Item::init_item();
             tempItem.name = "Rusty Axe".to_string();
+            tempItem.bonus = 2;
+            tempItem.value = 6;
             equipped.add_equipped("Weapon", tempItem);
             return equipped;
         }
 
-        pub fn get_player_stat_bonus (&self, stat: &str) -> i32 {
+        pub fn get_stat_bonus (&self, stat: &str) -> i32 {
             let result = self.stats.get_stat_bonus(stat);
             return result;
         }
 
-        pub fn player_skill_check (&self, skill: &str, difficulty: i32) -> bool {
-            let skill_bonus: i32 = self.get_player_stat_bonus(skill);
+        pub fn get_health(&self) -> i32 {
+            self.health.get_current_health()
+        }
+
+        pub fn skill_check (&self, skill: &str, difficulty: i32) -> bool {
+            let skill_bonus: i32 = self.get_stat_bonus(skill);
             let bonus :i32 = 0; // Implement finding bonuses from equipped items
             super::actions::skill_check(skill_bonus, bonus, difficulty)
         }
 
-        pub fn player_initiative_roll(&self) -> i32 {
-            let dex_bonus: i32 = self.get_player_stat_bonus("dex");
+        pub fn initiative_roll(&self) -> i32 {
+            let dex_bonus: i32 = self.get_stat_bonus("dex");
             let bonus :i32 = 0; // Implement finding bonuses from equipped items
             super::actions::initiative_roll(dex_bonus, bonus)
         }
 
-        pub fn player_attack(&self, monster: &mut MonsterInfo) {
-            let str_bonus: i32 = self.get_player_stat_bonus("str");
+        pub fn get_armor_class(&self) -> i32 {
+            self.equipped.get_armor_class()
+        }
+
+        pub fn armor_check(&self, roll: i32) -> bool {
+            let armor_bonus: i32 = self.get_armor_class();
+            if(roll >= armor_bonus) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        pub fn affect_health(&mut self, amount: i32) {
+            self.health.affect_health(amount);
+        }
+
+        pub fn attack(&self, monster: &mut MonsterInfo) { //if true, moster is dead
+            let str_bonus: i32 = self.get_stat_bonus("str");
             let bonus :i32 = self.equipped.get_item_equipped("Weapon").bonus;
             let roll = super::actions::attack_roll(str_bonus, bonus);
+
+            if(monster.armor_check(roll)){
+                let damage = self.equipped.get_item_equipped("Weapon").value;
+                let weap_bonus = self.equipped.get_item_equipped("Weapon").bonus;
+                let stat_bonus = self.get_stat_bonus("str");
+                let tot_damage_bonus = weap_bonus + stat_bonus;
+                let damage = damage_roll(tot_damage_bonus, damage);
+                println!("You hit {} for {} damage!", monster.name, damage);
+                monster.affect_health(-damage);
+            }
+            else{
+                println!("You missed!");
+            }
         }
     }
 

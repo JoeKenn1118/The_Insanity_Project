@@ -40,34 +40,63 @@ pub mod actions{
         return roll + str_bonus + bonus;
     }
 
+    pub fn damage_roll(bonus: i32, damage: i32) -> i32 {
+        let roll = rand::thread_rng().gen_range(1..=damage);
+        return roll + bonus;
+    }
+
     // Combat! if false, player is dead
     pub fn combat (player: &mut PlayerInfo, monster: &mut MonsterInfo, player_surprise: bool, monster_surprise: bool) -> bool {
         let mut order: Vec<Position> = Vec::new();
-        order.push(Position{name: player.name.clone(), initiative: player.player_initiative_roll()});
-        order.push(Position{name: monster.name.clone(), initiative: monster.monster_initiative_roll()});
+
+        order.push(Position{name: player.name.clone(), initiative: player.initiative_roll()});
+        order.push(Position{name: monster.name.clone(), initiative: monster.initiative_roll()});
         
         order.sort_by(|a, b| b.initiative.cmp(&a.initiative));
+
+        println!("Length of order: {}", order.len());
 
         if(player_surprise){
             if(monster_surprise){
                 panic!("Both players cannot be surprised!");
             }
             println!("You get the first attack!");
-            let mut result = player.player_attack(monster);
+            player.attack(monster);
+        }
+        else if (monster_surprise){
+            println!("The {} gets the first attack!", monster.name);
+            monster.attack(player);
         }
 
-        for turn in order.len()..0 {
-            println!("It is {}'s turn!", order[turn].name);
+        let combat = true;
+        let mut turn = 0;
+        println!("\tTurn: {}", turn);
+        while combat {
+            println!("It is {}'s turn!", order[turn % order.len()].name);
             
-            if order[turn].name == player.name {
+            println!("\tmodulus: {}", turn % order.len());
+
+            if order[turn % order.len()].name == player.name {
+                println!("Player turn");
+                player.attack(monster);
             }
+            if order[turn % order.len()].name == monster.name {
+                println!("Monster turn");
+                monster.attack(player);
+            }
+
+            if(player.get_health() <= 0){
+                return false;
+            }
+            if(monster.get_health() <= 0){
+                return true;
+            }
+            turn += 1;
+            println!("\tTurn: {}", turn);
         }
-
-        println!("Combat!");
-        println!("You approach the {} and with a swift heave of his sword you are cleaved nearly in two.", monster.name);
-
         return false;
     }
+
 }
 
 pub mod health{
@@ -225,6 +254,10 @@ pub mod inventory{
                     value: 0
                 }
             }
+        }
+
+        pub fn get_total_ac (&self) -> i32 {
+            self.total_ac
         }
     }
     pub struct Equipped {
@@ -400,6 +433,10 @@ pub mod inventory{
                 "Amulet" => self.amulet.clone(),
                 _ => Item::init_item(),
             }
+        }
+    
+        pub fn get_armor_class(&self) -> i32 {
+            self.armor.get_total_ac()
         }
     }
     pub struct Inventory {

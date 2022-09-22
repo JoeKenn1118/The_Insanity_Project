@@ -25,16 +25,8 @@ fn init_orc_stats () -> Stats {
 }
 
 fn init_orc_inventory () -> Inventory{
-    let mut inv:Inventory = Inventory::init_inventory();
+     Inventory::init_inventory()
     // Add Changes to inventory
-    let temp_item = Item {
-            name: "Gold".to_string(),
-            enchantment: 0,
-            bonus: 0,
-            value: 10,
-    };
-    inv.add_item(temp_item);
-    return inv;
 }
 
 fn init_orc_equipped () -> Equipped {
@@ -44,8 +36,8 @@ fn init_orc_equipped () -> Equipped {
     let temp_item: Item = Item {
         name: "Orc Sword".to_string(),
             enchantment: 0,
-            bonus: 0,
-            value: 0,
+            bonus: 1,
+            value: 6,
     };
     equip.add_equipped("Weapon", temp_item);
 
